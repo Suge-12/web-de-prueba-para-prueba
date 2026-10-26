@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MediConecta — Telemedicina y Agendamiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{--azul:#0b5fa5;--azul-osc:#0a3d66;--verde:#2fa97a;--verde-sua:#e6f6ef;--fondo:#f5f8fb;--texto:#14263a;--gris:#61758a;--borde:#dce5ee;--blanco:#fff;--rojo:#c0392b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--fondo);color:var(--texto);line-height:1.55}
+  header{position:sticky;top:0;z-index:20;background:var(--blanco);border-bottom:1px solid var(--borde)}
+  .nav{max-width:1150px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;gap:12px;flex-wrap:wrap}
+  .logo{font-weight:800;font-size:1.25rem;color:var(--azul)}.logo span{color:var(--verde)}
+  nav a{color:var(--texto);text-decoration:none;font-weight:600;margin-left:18px;font-size:.95rem}
+  nav a:hover{color:var(--azul)}
+  .rol{display:flex;gap:4px;background:var(--fondo);padding:4px;border-radius:999px;border:1px solid var(--borde)}
+  .rol button{border:0;background:none;padding:6px 14px;border-radius:999px;font:inherit;font-weight:600;cursor:pointer;color:var(--gris)}
+  .rol button.on{background:var(--azul);color:var(--blanco)}
+  main{max-width:1150px;margin:auto;padding:0 20px}
+  section{padding:56px 0;border-bottom:1px solid var(--borde)}
+  .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center}
+  .hero h1{font-size:clamp(2rem,4vw,3rem);line-height:1.1;font-weight:800;color:var(--azul-osc)}
+  .hero p{margin:16px 0 24px;color:var(--gris);font-size:1.1rem}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:var(--verde-sua);color:#1b7a56;padding:6px 12px;border-radius:999px;font-size:.85rem;font-weight:600}
+  .hero-card{background:linear-gradient(140deg,var(--azul),var(--azul-osc));color:var(--blanco);border-radius:22px;padding:28px}
+  .hero-card li{list-style:none;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.15)}
+  h2{font-size:1.8rem;color:var(--azul-osc);margin-bottom:6px}
+  .sub{color:var(--gris);margin-bottom:28px}
+  .card{background:var(--blanco);border:1px solid var(--borde);border-radius:16px;padding:22px}
+  .grid{display:grid;gap:18px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+  label{font-weight:600;font-size:.9rem;display:block;margin-bottom:6px}
+  select,input,textarea{width:100%;padding:11px 12px;border:1px solid var(--borde);border-radius:10px;font:inherit;background:var(--blanco)}
+  textarea{min-height:80px;resize:vertical}
+  .btn{display:inline-block;background:var(--azul);color:var(--blanco);border:0;padding:12px 22px;border-radius:10px;font:inherit;font-weight:700;cursor:pointer}
+  .btn:hover{background:var(--azul-osc)}.btn.verde{background:var(--verde)}.btn.sec{background:var(--fondo);color:var(--azul);border:1px solid var(--borde)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .pasos{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap}
+  .paso{padding:6px 14px;border-radius:999px;background:var(--blanco);border:1px solid var(--borde);font-size:.85rem;font-weight:600;color:var(--gris)}
+  .paso.on{background:var(--azul);color:var(--blanco);border-color:var(--azul)}
+  .medico{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .horas{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .hora{border:1px solid var(--azul);color:var(--azul);background:var(--blanco);padding:6px 12px;border-radius:8px;cursor:pointer;font:inherit;font-weight:600}
+  .hora.sel{background:var(--azul);color:var(--blanco)}
+  .estado{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.8rem;font-weight:700}
+  .pendiente{background:#fff4dc;color:#94650a}.confirmada{background:var(--verde-sua);color:#1b7a56}
+  .msg{padding:12px 14px;border-radius:10px;margin-top:14px;font-weight:600;display:none}
+  .msg.err{background:#fdecea;color:var(--rojo);display:block}.msg.ok{background:var(--verde-sua);color:#1b7a56;display:block}
+  .oculto{display:none!important}
+  .spinner{width:18px;height:18px;border:3px solid var(--borde);border-top-color:var(--azul);border-radius:50%;display:inline-block;animation:g .8s linear infinite;vertical-align:middle;margin-right:8px}
+  @keyframes g{to{transform:rotate(360deg)}}
+  .video{background:#0d1b2a;border-radius:16px;aspect-ratio:16/9;position:relative;display:flex;align-items:center;justify-content:center;color:#cfe3f5;text-align:center}
+  .video .pip{position:absolute;right:14px;bottom:14px;width:26%;aspect-ratio:16/10;background:#22384f;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+  .aviso{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.12);padding:4px 10px;border-radius:999px;font-size:.75rem}
+  table{width:100%;border-collapse:collapse;font-size:.92rem}
+  th,td{text-align:left;padding:10px;border-bottom:1px solid var(--borde)}th{color:var(--gris);font-weight:600}
+  .bloqueo{background:var(--fondo);border:1px dashed var(--borde);padding:30px;text-align:center;border-radius:16px;color:var(--gris)}
+  /* Diagramas */
+  .galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+  .diag{background:var(--blanco);border:1px solid var(--borde);border-radius:16px;overflow:hidden;cursor:zoom-in;transition:transform .2s,box-shadow .2s}
+  .diag:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(10,61,102,.12)}
+  .diag img{width:100%;height:220px;object-fit:contain;background:#1b1b1b;display:block}
+  .diag div{padding:14px 16px}.diag h3{font-size:1rem;color:var(--azul-osc)}.diag p{font-size:.85rem;color:var(--gris)}
+  .lightbox{position:fixed;inset:0;background:rgba(5,15,25,.9);display:none;align-items:center;justify-content:center;z-index:50;padding:30px;flex-direction:column;gap:12px}
+  .lightbox.on{display:flex}.lightbox img{max-width:100%;max-height:85vh;border-radius:10px}
+  .lightbox p{color:#fff;font-weight:600}.cerrar{position:absolute;top:16px;right:22px;font-size:2rem;color:#fff;background:none;border:0;cursor:pointer}
+  footer{text-align:center;padding:30px;color:var(--gris);font-size:.85rem}
+  @media(max-width:820px){.hero,.g2,.g3{grid-template-columns:1fr}nav a{margin-left:10px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo">Medi<span>Conecta</span></div>
+    <nav>
+      <a href="#inicio">Inicio</a>
+      <a href="#agendar">Agendar cita</a>
+      <a href="#teleconsulta">Teleconsulta</a>
+      <a href="#diagramas">Diagramas</a>
+    </nav>
+    <div class="rol" role="group" aria-label="Tipo de usuario">
+      <button class="on" data-rol="paciente">Paciente</button>
+      <button data-rol="medico">Médico</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- INICIO -->
+  <section id="inicio" class="hero">
+    <div>
+      <h1>Sistema de Telemedicina y Agendamiento</h1>
+      <p>Busca profesionales por especialidad, agenda y paga tu cita, y atiéndete por teleconsulta en audio y video HD.</p>
+      <div class="chips">
+        <span class="chip">TLS 1.3 en tránsito</span>
+        <span class="chip">AES-256 en reposo</span>
+        <span class="chip">Comprobante digital</span>
+      </div>
+    </div>
+    <div class="hero-card">
+      <strong id="rolTitulo">Funciones del Paciente</strong>
+      <ul id="rolLista"></ul>
+    </div>
+  </section>
+
+  <!-- FLUJO 1 -->
+  <section id="agendar">
+    <h2>Búsqueda, agendamiento y pago de cita</h2>
+    <p class="sub">Flujo 1 — Paciente → App/Web UI → API Gateway → Servicio de Agendamiento → Pasarela de Pagos.</p>
+    <div id="agendarBloqueo" class="bloqueo oculto">Esta función está disponible solo para el Paciente.</div>
+    <div id="agendarContenido">
+      <div class="pasos">
+        <span class="paso on" data-p="1">1. Buscar</span>
+        <span class="paso" data-p="2">2. Seleccionar horario</span>
+        <span class="paso" data-p="3">3. Pagar</span>
+        <span class="paso" data-p="4">4. Comprobante</span>
+      </div>
+      <div class="card">
+        <div class="grid g3" style="align-items:end">
+          <div><label for="esp">Especialidad</label>
+            <select id="esp"><option value="">Selecciona…</option><option>Medicina general</option><option>Cardiología</option><option>Pediatría</option><option>Dermatología</option></select></div>
+          <div><label for="fecha">Disponibilidad horaria (fecha)</label><input type="date" id="fecha" /></div>
+          <div><button class="btn" id="btnBuscar">Buscar profesionales</button></div>
+        </div>
+        <div id="msgBuscar" class="msg"></div>
+      </div>
+      <div id="resultados" class="grid" style="margin-top:18px"></div>
+
+      <div id="pago" class="card oculto" style="margin-top:18px">
+        <h3 style="margin-bottom:12px">Resumen y pago</h3>
+        <div class="grid g2">
+          <div>
+            <p><strong>Profesional:</strong> <span id="rMed"></span></p>
+            <p><strong>Especialidad:</strong> <span id="rEsp"></span></p>
+            <p><strong>Fecha y hora:</strong> <span id="rFecha"></span></p>
+            <p><strong>Monto:</strong> <span id="rMonto"></span></p>
+            <p style="margin-top:8px"><strong>Estado:</strong> <span class="estado pendiente">Reserva pendiente</span></p>
+          </div>
+          <div>
+            <label for="tarjeta">Datos de pago (Pasarela externa)</label>
+            <input id="tarjeta" placeholder="Número de tarjeta (16 dígitos)" maxlength="19" />
+            <p style="font-size:.8rem;color:var(--gris);margin:6px 0 12px">El cobro se procesa en la pasarela de pagos externa mediante token. Demostración: no se realizan cobros reales.</p>
+            <button class="btn verde" id="btnPagar">Confirmar y pagar</button>
+          </div>
+        </div>
+        <div id="msgPago" class="msg"></div>
+      </div>
+
+      <div id="comprobante" class="card oculto" style="margin-top:18px;border-color:var(--verde)">
+        <h3>Comprobante digital</h3>
+        <p class="sub" style="margin:4px 0 12px">Cita y pago almacenados de forma cifrada.</p>
+        <table><tbody id="tablaComp"></tbody></table>
+        <button class="btn sec" style="margin-top:14px" onclick="location.reload()">Agendar otra cita</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLUJO 2 -->
+  <section id="teleconsulta">
+    <h2>Teleconsulta y actualización de ficha clínica</h2>
+    <p class="sub">Flujo 2 — Paciente y Médico en sesión de audio/video; el Médico consulta y actualiza la ficha médica.</p>
+    <div class="grid g2">
+      <div>
+        <div class="video" id="video">
+          <span class="aviso">Conexión de video simulada</span>
+          <div id="videoTxt">Sala de teleconsulta<br><small>Presiona "Iniciar" para conectar</small></div>
+          <div class="pip">Tú</div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" id="btnVideo">Iniciar teleconsulta</button>
+          <span id="estadoVideo" class="estado pendiente" style="align-self:center">Sin conectar</span>
+        </div>
+      </div>
+      <div class="card">
+        <div id="fichaBloqueo" class="bloqueo">La ficha médica solo puede consultarse y actualizarse por el Médico. Cambia a "Médico" arriba.</div>
+        <div id="fichaForm" class="oculto">
+          <h3 style="margin-bottom:10px">Ficha médica del paciente</h3>
+          <button class="btn sec" id="btnFicha" style="margin-bottom:12px">Consultar ficha médica</button>
+          <div id="fichaDatos" class="oculto">
+            <table style="margin-bottom:14px"><tbody id="historial"></tbody></table>
+            <label for="diag">Diagnóstico</label><textarea id="diag"></textarea>
+            <label for="obs" style="margin-top:10px">Observaciones</label><textarea id="obs"></textarea>
+            <label for="receta" style="margin-top:10px">Receta digital</label><textarea id="receta"></textarea>
+            <button class="btn verde" id="btnGuardar" style="margin-top:12px">Actualizar ficha y emitir receta</button>
+            <div id="msgFicha" class="msg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIAGRAMAS (apartado extra) -->
+  <section id="diagramas">
+    <h2>Diagramas del sistema</h2>
+    <p class="sub">Modelos UML en los que se basa esta plataforma. Haz clic en un diagrama para ampliarlo.</p>
+    <div class="galeria" id="galeria"></div>
+  </section>
+</main>
+
+<div class="lightbox" id="lightbox">
+  <button class="cerrar" aria-label="Cerrar">&times;</button>
+  <img id="lbImg" alt="" /><p id="lbTxt"></p>
+</div>
+
+<footer>MediConecta — Prototipo académico basado en diagramas UML.</footer>
+
+<script>
+const funciones = {
+  paciente:["Buscar profesionales por especialidad","Filtrar por disponibilidad horaria","Confirmar y agendar cita","Procesar pago de cita","Realizar teleconsulta (Audio/Video HD)"],
+  medico:["Realizar teleconsulta (Audio/Video HD)","Consultar ficha médica","Actualizar ficha médica","Registrar diagnóstico y observaciones","Emitir receta digital"]
+};
+let rol="paciente";
+function aplicarRol(){
+  document.querySelectorAll(".rol button").forEach(b=>b.classList.toggle("on",b.dataset.rol===rol));
+  document.getElementById("rolTitulo").textContent = rol==="paciente"?"Funciones del Paciente":"Funciones del Médico";
+  document.getElementById("rolLista").innerHTML = funciones[rol].map(f=>"<li>✓ "+f+"</li>").join("");
+  document.getElementById("agendarBloqueo").classList.toggle("oculto",rol==="paciente");
+  document.getElementById("agendarContenido").classList.toggle("oculto",rol!=="paciente");
+  document.getElementById("fichaBloqueo").classList.toggle("oculto",rol==="medico");
+  document.getElementById("fichaForm").classList.toggle("oculto",rol!=="medico");
+}
+document.querySelectorAll(".rol button").forEach(b=>b.onclick=()=>{rol=b.dataset.rol;aplicarRol();});
+aplicarRol();
+
+// Flujo 1
+const medicos=[
+  {nombre:"Dra. Camila Rojas",esp:"Medicina general",monto:25000,horas:["09:00","10:30","15:00"]},
+  {nombre:"Dr. Andrés Soto",esp:"Cardiología",monto:45000,horas:["11:00","16:30"]},
+  {nombre:"Dra. Valentina Muñoz",esp:"Pediatría",monto:35000,horas:["08:30","12:00","17:00"]},
+  {nombre:"Dr. Felipe Vargas",esp:"Dermatología",monto:40000,horas:["10:00","14:00"]},
+  {nombre:"Dr. Tomás Díaz",esp:"Medicina general",monto:25000,horas:["13:00","18:00"]}
+];
+let sel=null;
+const $=id=>document.getElementById(id);
+const clp=n=>"$"+n.toLocaleString("es-CL")+" CLP";
+function paso(n){document.querySelectorAll(".paso").forEach(p=>p.classList.toggle("on",+p.dataset.p===n));}
+function msg(id,txt,tipo){const m=$(id);m.className="msg "+tipo;m.textContent=txt;}
+$("fecha").min=new Date().toISOString().split("T")[0];
+$("btnBuscar").onclick=()=>{
+  const esp=$("esp").value,f=$("fecha").value;
+  if(!esp||!f){msg("msgBuscar","Selecciona una especialidad y una fecha.","err");return;}
+  $("msgBuscar").className="msg";
+  $("resultados").innerHTML='<div class="card"><span class="spinner"></span>Consultando profesionales disponibles…</div>';
+  setTimeout(()=>{
+    const lista=medicos.filter(m=>m.esp===esp);
+    $("resultados").innerHTML=lista.map((m,i)=>`<div class="card medico"><div><strong>${m.nombre}</strong><br><span style="color:var(--gris)">${m.esp} · ${clp(m.monto)}</span>
+      <div class="horas">${m.horas.map(h=>`<button class="hora" data-m="${medicos.indexOf(m)}" data-h="${h}">${h}</button>`).join("")}</div></div></div>`).join("")
+      || '<div class="card">No hay profesionales disponibles para ese filtro.</div>';
+    paso(2);
+    document.querySelectorAll(".hora").forEach(b=>b.onclick=()=>{
+      document.querySelectorAll(".hora").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");
+      const m=medicos[b.dataset.m];sel={...m,hora:b.dataset.h,fecha:f};
+      $("rMed").textContent=m.nombre;$("rEsp").textContent=m.esp;$("rFecha").textContent=f+" "+b.dataset.h;$("rMonto").textContent=clp(m.monto);
+      $("pago").classList.remove("oculto");paso(3);$("pago").scrollIntoView({behavior:"smooth",block:"center"});
+    });
+  },700);
+};
+$("btnPagar").onclick=()=>{
+  const t=$("tarjeta").value.replace(/\s/g,"");
+  if(!/^\d{16}$/.test(t)){msg("msgPago","Ingresa un número de tarjeta válido de 16 dígitos.","err");return;}
+  $("btnPagar").disabled=true;$("btnPagar").innerHTML='<span class="spinner"></span>Procesando pago…';
+  setTimeout(()=>{
+    const folio="CMP-"+Math.floor(100000+Math.random()*900000);
+    $("tablaComp").innerHTML=[["Folio",folio],["Profesional",sel.nombre],["Especialidad",sel.esp],["Fecha y hora",sel.fecha+" "+sel.hora],["Monto pagado",clp(sel.monto)],["Tarjeta","**** "+t.slice(-4)],["Estado",'<span class="estado confirmada">Confirmada y pagada</span>']]
+      .map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join("");
+    $("pago").classList.add("oculto");$("resultados").innerHTML="";$("comprobante").classList.remove("oculto");paso(4);
+  },1200);
+};
+
+// Flujo 2
+let conectado=false;
+$("btnVideo").onclick=()=>{
+  conectado=!conectado;
+  $("videoTxt").innerHTML=conectado?"🎥 En sesión con "+(rol==="paciente"?"el Médico":"el Paciente")+"<br><small>Audio/Video HD (simulado)</small>":"Sala de teleconsulta<br><small>Sesión finalizada</small>";
+  $("btnVideo").textContent=conectado?"Finalizar teleconsulta":"Iniciar teleconsulta";
+  $("estadoVideo").className="estado "+(conectado?"confirmada":"pendiente");
+  $("estadoVideo").textContent=conectado?"Conectado":"Sin conectar";
+};
+$("btnFicha").onclick=()=>{
+  $("btnFicha").innerHTML='<span class="spinner"></span>Consultando…';
+  setTimeout(()=>{
+    $("historial").innerHTML=[["Paciente","Juan Pérez"],["RUT","12.345.678-9"],["Última atención","Sin registros previos en esta demostración"]].map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join("");
+    $("fichaDatos").classList.remove("oculto");$("btnFicha").textContent="Ficha cargada";$("btnFicha").disabled=true;
+  },600);
+};
+$("btnGuardar").onclick=()=>{
+  if(!$("diag").value.trim()){msg("msgFicha","El diagnóstico es obligatorio para actualizar la ficha.","err");return;}
+  $("btnGuardar").innerHTML='<span class="spinner"></span>Guardando…';
+  setTimeout(()=>{$("btnGuardar").textContent="Actualizar ficha y emitir receta";msg("msgFicha","Ficha médica actualizada"+($("receta").value.trim()?" y receta digital emitida":"")+" correctamente.","ok");},800);
+};
+
+// Diagramas
+const diagramas=[
+  ["diagramas/caso-de-uso.png","Diagrama de casos de uso","Actores Paciente, Médico y Pasarela de Pagos con sus funcionalidades."],
+  ["diagramas/clases.png","Diagrama de clases","Entidades del sistema, atributos, métodos y relaciones."],
+  ["diagramas/secuencia-flujo1.png","Secuencia — Flujo 1","Búsqueda, agendamiento y pago de cita."],
+  ["diagramas/secuencia-flujo2.png","Secuencia — Flujo 2","Teleconsulta y actualización de ficha clínica."],
+  ["diagramas/componentes.png","Diagrama de componentes","Módulos, servicios, interfaces y dependencias."],
+  ["diagramas/despliegue.png","Diagrama de despliegue","Infraestructura y nodos donde se ejecuta el sistema."]
+];
+$("galeria").innerHTML=diagramas.map((d,i)=>`<figure class="diag" data-i="${i}"><img src="${d[0]}" alt="${d[1]}" loading="lazy"><div><h3>${d[1]}</h3><p>${d[2]}</p></div></figure>`).join("");
+document.querySelectorAll(".diag").forEach(f=>f.onclick=()=>{const d=diagramas[f.dataset.i];$("lbImg").src=d[0];$("lbImg").alt=d[1];$("lbTxt").textContent=d[1];$("lightbox").classList.add("on");});
+$("lightbox").onclick=e=>{if(e.target.id!=="lbImg")$("lightbox").classList.remove("on");};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("lightbox").classList.remove("on");});
+</script>
+</body>
+</html>
